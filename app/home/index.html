@@ -48,11 +48,18 @@
               <div class="console-header-global">
                 <div class="global-btns">
                   <div class="global-btn-user t--service">
-                    <button type="button" class="btn-user btn-popper">
+                    <button
+                      type="button"
+                      class="btn-user btn-popper"
+                      aria-expanded="false"
+                      aria-haspopup="true"
+                      aria-controls="service-menu"
+                      aria-label="서비스 더보기 열기"
+                    >
                       <span>서비스 더보기</span>
                     </button>
 
-                    <div class="global-user-menu">
+                    <div class="global-user-menu" id="service-menu" role="menu" aria-label="서비스 메뉴">
                       <ul class="user-menu-list">
                         <li>
                           <a href="#">
@@ -201,11 +208,11 @@
                 <div class="tit">
                   <em>매출액 급증 업종 TOP 3</em>
                   <div class="tooltip-root ac-hover">
-                    <button type="button" class="btn-icon">
+                    <button type="button" class="btn-icon" aria-label="인사이트 설명 열기">
                       <i class="icon-comm i--tooltip"></i>
                       <span class="blind">툴팁보기</span>
                     </button>
-                    <div class="tooltip-popper">
+                    <div class="tooltip-popper" role="dialog" aria-label="인사이트 설명">
                       <div class="tooltip-box">
                         <p>당사 보유 데이터 내 기업의 전 · 당기 매출액 합산 기준</p>
                       </div>
@@ -217,12 +224,30 @@
                     데이터 기준 2026년 1월 1일
                   </span> -->
                 </div>
-                <div class="tabmenu-menu">
-                  <button type="button" class="tabmenu-btn ac--active" data-target-tab="insight1">법인사업자</button>
-                  <button type="button" class="tabmenu-btn" data-target-tab="insight2">개인사업자</button>
+                <div class="tabmenu-menu" role="tablist" aria-label="인사이트 보기 방식">
+                  <button
+                    type="button"
+                    class="tabmenu-btn ac--active"
+                    data-target-tab="insight1"
+                    role="tab"
+                    aria-selected="true"
+                    aria-controls="insight1"
+                  >
+                    법인사업자
+                  </button>
+                  <button
+                    type="button"
+                    class="tabmenu-btn"
+                    data-target-tab="insight2"
+                    role="tab"
+                    aria-selected="false"
+                    aria-controls="insight2"
+                  >
+                    개인사업자
+                  </button>
                 </div>
 
-                <div class="tabmenu-content"></div>
+                <div class="tabmenu-content" id="insight1" role="tabpanel" aria-labelledby="insight-tab-1"></div>
 
                 <ul class="list">
                   <li>
@@ -420,8 +445,17 @@
 
               <div class="SOLFooter-dropbox">
                 <div class="SOLFooter-dropbox-inner">
-                  <button type="button" class="SOLFooter-dropbox-btn">Family Site</button>
-                  <ul>
+                  <button
+                    type="button"
+                    class="SOLFooter-dropbox-btn"
+                    aria-expanded="false"
+                    aria-haspopup="true"
+                    aria-controls="family-site-list"
+                    aria-label="패밀리 사이트 열기"
+                  >
+                    Family Site
+                  </button>
+                  <ul id="family-site-list" role="menu" aria-label="패밀리 사이트">
                     <li><a href="https://techfinratings.com" target="_blank">Techfin ratings</a></li>
                     <li><a href="" target="_blank">WEHAGO</a></li>
                     <li><a href="" target="_blank">Amaranth 10</a></li>
@@ -467,7 +501,7 @@
 
         <div class="side-short-root">
           <div class="side-short-cont">
-            <button type="button" class="btn-top t--outlined">
+            <button type="button" class="btn-top t--outlined" aria-label="맨 위로 이동">
               <i class="icon-comm i--up"></i>
               <span class="blind">Scroll to Top</span>
             </button>
@@ -483,14 +517,20 @@
         const familyList = document.querySelector('.SOLFooter-dropbox');
         const familyBtn = document.querySelector('.SOLFooter-dropbox-btn');
 
-        familyBtn.addEventListener('click', function (e) {
-          e.stopPropagation();
-          familyList.classList.toggle('on');
-        });
+        if (familyBtn && familyList) {
+          familyBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const isOpen = familyList.classList.toggle('on');
+            familyBtn.setAttribute('aria-expanded', String(isOpen));
+          });
 
-        document.addEventListener('click', (e) => {
-          e.target !== familyList ? familyList.classList.remove('on') : false;
-        });
+          document.addEventListener('click', (e) => {
+            if (!familyList.contains(e.target)) {
+              familyList.classList.remove('on');
+              familyBtn.setAttribute('aria-expanded', 'false');
+            }
+          });
+        }
       });
     </script>
 

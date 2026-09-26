@@ -183,12 +183,19 @@
                     </button>
 
                     <div class="global-btn-user">
-                      <button type="button" class="btn-user btn-popper">
+                      <button
+                        type="button"
+                        class="btn-user btn-popper"
+                        aria-expanded="false"
+                        aria-haspopup="true"
+                        aria-controls="global-user-menu"
+                        aria-label="사용자 메뉴 열기"
+                      >
                         <i class="icon-comm i--user"></i>
                         <span>kimtech@techfinratings.com</span>
                       </button>
 
-                      <div class="global-user-menu">
+                      <div class="global-user-menu" id="global-user-menu" role="menu" aria-label="사용자 메뉴">
                         <div class="user-menu-info">
                           <em>김테크님</em>
                           <div class="info-detail">
@@ -248,16 +255,23 @@
                     </div>
 
                     <div class="global-btn-notify">
-                      <button type="button" class="btn-icon btn-popper">
+                      <button
+                        type="button"
+                        class="btn-icon btn-popper"
+                        aria-expanded="false"
+                        aria-haspopup="true"
+                        aria-controls="notify-popper"
+                        aria-label="알림 열기"
+                      >
                         <i class="icon-comm i--bell"></i>
                         <span class="blind">알림</span>
                         <span class="badge">14</span>
                       </button>
 
-                      <div class="popper-comm notify-popper">
+                      <div class="popper-comm notify-popper" id="notify-popper" role="dialog" aria-label="알림">
                         <div class="notify-header">
                           <h3 class="font-h3">알림</h3>
-                          <button type="button" class="btn-icon">
+                          <button type="button" class="btn-icon" aria-label="알림 설정">
                             <i class="icon-comm i--set"></i>
                           </button>
                         </div>
@@ -393,12 +407,19 @@
                     <!-- // global-btn-notify -->
 
                     <div class="global-btn-apps">
-                      <button type="button" class="btn-icon btn-popper">
+                      <button
+                        type="button"
+                        class="btn-icon btn-popper"
+                        aria-expanded="false"
+                        aria-haspopup="true"
+                        aria-controls="apps-popper"
+                        aria-label="서비스 바로가기 열기"
+                      >
                         <i class="icon-comm i--apps"></i>
                         <span class="blind">Apps</span>
                       </button>
 
-                      <div class="popper-comm notify-popper">
+                      <div class="popper-comm notify-popper" id="apps-popper" role="dialog" aria-label="서비스 바로가기">
                         <h3 class="font-h4">Crediview 제공 서비스</h3>
                         <ul class="notify-list mt10">
                           <li>
@@ -457,7 +478,14 @@
                       </li>
                     </ul>
 
-                    <button type="button" class="btn-icon btn-summary" data-target-id="detail1">
+                    <button
+                      type="button"
+                      class="btn-icon btn-summary"
+                      data-target-id="detail1"
+                      aria-expanded="false"
+                      aria-controls="detail1"
+                      aria-label="기업 상세 정보 더보기"
+                    >
                       <i class="icon-comm i--gt-d s--lg"></i>
                       <span class="blind">더보기</span>
                     </button>
@@ -511,27 +539,91 @@
               </div>
               <!-- // cont-headline-box -->
 
-              <div class="tabmenu-menu">
-                <button type="button" class="tabmenu-btn ac--active" onclick="location.href = '../arap/company.html'">
+              <div class="tabmenu-menu" role="tablist" aria-label="기업 상세 탭">
+                <button
+                  type="button"
+                  class="tabmenu-btn ac--active"
+                  role="tab"
+                  aria-selected="true"
+                  aria-controls="tab-panel-company"
+                  id="tab-company"
+                  onclick="location.href = '../arap/company.html'"
+                >
                   월별매입매출
                 </button>
-                <button type="button" class="tabmenu-btn" onclick="location.href = '../arap/finance.html'">
+                <button
+                  type="button"
+                  class="tabmenu-btn"
+                  role="tab"
+                  aria-selected="false"
+                  aria-controls="tab-panel-finance"
+                  id="tab-finance"
+                  onclick="location.href = '../arap/finance.html'"
+                >
                   월별재무제표
                 </button>
-                <button type="button" class="tabmenu-btn" onclick="location.href = '../arap/network.html'">
+                <button
+                  type="button"
+                  class="tabmenu-btn"
+                  role="tab"
+                  aria-selected="false"
+                  aria-controls="tab-panel-network"
+                  id="tab-network"
+                  onclick="location.href = '../arap/network.html'"
+                >
                   거래처관계망
                 </button>
               </div>
 
               <div class="tabmenu-content">
-                <div class="tabmenu-filter">
-                  <button type="button" class="tabmenu-btn ac--active" data-target-tab="filter1">매출액정보</button>
-                  <button type="button" class="tabmenu-btn" data-target-tab="filter2">매입액 정보</button>
-                  <button type="button" class="tabmenu-btn" data-target-tab="filter3">매출채권 정보</button>
-                  <button type="button" class="tabmenu-btn" data-target-tab="filter4">매입채무 정보</button>
+                <div class="tabmenu-filter" role="tablist" aria-label="상세 정보 탭">
+                  <button
+                    type="button"
+                    class="tabmenu-btn ac--active"
+                    data-target-tab="filter1"
+                    role="tab"
+                    aria-selected="true"
+                    aria-controls="filter1"
+                    id="filter-tab-1"
+                  >
+                    매출액정보
+                  </button>
+                  <button
+                    type="button"
+                    class="tabmenu-btn"
+                    data-target-tab="filter2"
+                    role="tab"
+                    aria-selected="false"
+                    aria-controls="filter2"
+                    id="filter-tab-2"
+                  >
+                    매입액 정보
+                  </button>
+                  <button
+                    type="button"
+                    class="tabmenu-btn"
+                    data-target-tab="filter3"
+                    role="tab"
+                    aria-selected="false"
+                    aria-controls="filter3"
+                    id="filter-tab-3"
+                  >
+                    매출채권 정보
+                  </button>
+                  <button
+                    type="button"
+                    class="tabmenu-btn"
+                    data-target-tab="filter4"
+                    role="tab"
+                    aria-selected="false"
+                    aria-controls="filter4"
+                    id="filter-tab-4"
+                  >
+                    매입채무 정보
+                  </button>
                 </div>
 
-                <div class="tabmenu-content" id="filter1">
+                <div class="tabmenu-content" id="filter1" role="tabpanel" aria-labelledby="filter-tab-1">
                   <h3 class="blind">매출액정보</h3>
 
                   <div class="searchbox-root">

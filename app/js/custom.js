@@ -1,10 +1,51 @@
 document.addEventListener('DOMContentLoaded', function () {
+  const initA11yState = () => {
+    document.querySelectorAll('.btn-popper').forEach((button) => {
+      if (!button.hasAttribute('aria-expanded')) button.setAttribute('aria-expanded', 'false');
+      if (!button.hasAttribute('aria-haspopup')) button.setAttribute('aria-haspopup', 'true');
+    });
+
+    document.querySelectorAll('.btn-summary').forEach((button) => {
+      if (!button.hasAttribute('aria-expanded')) button.setAttribute('aria-expanded', 'false');
+      if (button.dataset.targetId && !button.hasAttribute('aria-controls')) {
+        button.setAttribute('aria-controls', button.dataset.targetId);
+      }
+    });
+
+    document.querySelectorAll('.tabmenu-btn').forEach((tab) => {
+      if (!tab.hasAttribute('role')) tab.setAttribute('role', 'tab');
+      if (!tab.hasAttribute('aria-selected')) {
+        tab.setAttribute('aria-selected', tab.classList.contains('ac--active') ? 'true' : 'false');
+      }
+      if (tab.dataset.targetTab && !tab.hasAttribute('aria-controls')) {
+        tab.setAttribute('aria-controls', tab.dataset.targetTab);
+      }
+    });
+
+    document.querySelectorAll('.tabmenu-content').forEach((panel) => {
+      if (panel.id && !panel.hasAttribute('role')) panel.setAttribute('role', 'tabpanel');
+      if (panel.id) {
+        const relatedTab = document.querySelector(`.tabmenu-btn[aria-controls="${panel.id}"]`);
+        if (relatedTab && !panel.hasAttribute('aria-labelledby')) {
+          panel.setAttribute('aria-labelledby', relatedTab.id || '');
+        }
+      }
+    });
+  };
+
+  initA11yState();
+
   const sideTabBtns = document.querySelectorAll('.sidebar-tab-btn');
   const sideTabConts = document.querySelectorAll('.sidebar-content');
 
   sideTabBtns.forEach((btn) => {
     btn.addEventListener('click', (e) => {
-      const target = document.querySelector(`.${btn.getAttribute(['data-target'])}`);
+      const targetSelector = btn.getAttribute('data-target');
+      if (!targetSelector) return;
+
+      const target = document.querySelector(`.${targetSelector}`);
+      if (!target) return;
+
       sideTabBtns.forEach((item) => item.classList.remove('ac--active'));
       btn.classList.add('ac--active');
 
@@ -16,11 +57,12 @@ document.addEventListener('DOMContentLoaded', function () {
   // sidebar
   const sideBtns = document.querySelectorAll('.sidebar-menu-cont .sidebar-btn');
   const foldBtn = document.querySelector('.sidebar-menu .sidebar-foldBtn');
+  const menuBtn = document.querySelector('.sidebar-btn.menu');
 
   const sideTopBtns = document.querySelectorAll('.sidebar-menu-top .sidebar-btn');
   const tabConts = document.querySelectorAll('.sidebar-menu-cont');
 
-  if (sideBtns) {
+  if (sideBtns.length > 0) {
     sideBtns.forEach((btn) => {
       btn.addEventListener('click', (e) => {
         sideBtns.forEach((item) => {
@@ -29,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
         btn.classList.add('ac--active');
 
         // 클릭시 sidebar가 접혀있으면 펼침
-        if (!foldBtn.classList.contains('open')) {
+        if (foldBtn && !foldBtn.classList.contains('open')) {
           foldBtn.classList.add('open');
           document.body.classList.add('open');
         }
@@ -37,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  if (sideTopBtns) {
+  if (sideTopBtns.length > 0) {
     sideTopBtns.forEach((btn) => {
       btn.addEventListener('click', (e) => {
         sideTopBtns.forEach((item) => {
@@ -65,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.body.classList.remove('open');
 
         // 접히면 메뉴버튼 활성화
-        document.querySelector('.sidebar-btn.menu').click();
+        if (menuBtn) menuBtn.click();
       } else {
         foldBtn.classList.add('open');
         document.body.classList.add('open');
@@ -92,10 +134,17 @@ document.addEventListener('DOMContentLoaded', function () {
       e.stopPropagation();
       const isActive = wrapper.classList.contains('ac--active');
 
-      globalBtns.forEach((w) => w.classList.remove('ac--active'));
+      globalBtns.forEach((w) => {
+        w.classList.remove('ac--active');
+        const trigger = w.querySelector('.btn-popper');
+        if (trigger) trigger.setAttribute('aria-expanded', 'false');
+      });
 
       if (!isActive) {
         wrapper.classList.add('ac--active');
+        btn.setAttribute('aria-expanded', 'true');
+      } else {
+        btn.setAttribute('aria-expanded', 'false');
       }
     });
   });
@@ -105,6 +154,8 @@ document.addEventListener('DOMContentLoaded', function () {
     globalBtns.forEach((wrapper) => {
       if (!wrapper.contains(e.target)) {
         wrapper.classList.remove('ac--active');
+        const trigger = wrapper.querySelector('.btn-popper');
+        if (trigger) trigger.setAttribute('aria-expanded', 'false');
       }
     });
   });
@@ -124,8 +175,10 @@ document.addEventListener('DOMContentLoaded', function () {
         // tab button toggle
         siblingTabs.forEach((siblings) => {
           siblings.classList.remove('ac--active');
+          siblings.setAttribute('aria-selected', 'false');
         });
         tab.classList.add('ac--active');
+        tab.setAttribute('aria-selected', 'true');
 
         if (tab.dataset.targetTab) {
           const targetId = tab.dataset.targetTab;
@@ -137,9 +190,11 @@ document.addEventListener('DOMContentLoaded', function () {
             Array.from(contentContainer.children).forEach((child) => {
               if (child.classList.contains('tabmenu-content')) {
                 if (child === targetCont) {
-                  child.style.display = 'flex'; // 혹은 block
+                  child.style.display = 'flex';
+                  child.setAttribute('aria-hidden', 'false');
                 } else {
                   child.style.display = 'none';
+                  child.setAttribute('aria-hidden', 'true');
                 }
               }
             });
@@ -170,9 +225,15 @@ document.addEventListener('DOMContentLoaded', function () {
   const summary = document.querySelectorAll('.btn-summary');
   summary.forEach((btn) => {
     btn.addEventListener('click', (e) => {
-      const target = document.querySelector(`#${btn.getAttribute(['data-target-id'])}`);
-      btn.classList.toggle('ac--open');
+      const targetId = btn.getAttribute('data-target-id');
+      if (!targetId) return;
+
+      const target = document.querySelector(`#${targetId}`);
+      if (!target) return;
+
+      const isExpanded = btn.classList.toggle('ac--open');
       target.classList.toggle('ac--open');
+      btn.setAttribute('aria-expanded', String(isExpanded));
     });
   });
 
@@ -184,13 +245,18 @@ document.addEventListener('DOMContentLoaded', function () {
     if (openBtn) {
       openBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        wrapper.classList.toggle('ac--active');
+        const isOpen = wrapper.classList.toggle('ac--active');
+        openBtn.setAttribute('aria-expanded', String(isOpen));
       });
     }
 
     const closeBtn = wrapper.querySelector('.btn-popper-close');
     if (closeBtn) {
-      closeBtn.onclick = () => wrapper.classList.remove('ac--active');
+      closeBtn.onclick = () => {
+        wrapper.classList.remove('ac--active');
+        const trigger = wrapper.querySelector('.btn-popper');
+        if (trigger) trigger.setAttribute('aria-expanded', 'false');
+      };
     }
   });
 
@@ -243,13 +309,15 @@ document.addEventListener('DOMContentLoaded', function () {
   if (headerSearchField) {
     const headerSearchRoot = headerSearchField.closest('.console-header-search.popper-search-root');
 
-    headerSearchField.addEventListener('focus', () => {
-      headerSearchRoot.classList.add('ac--active');
-    });
+    if (headerSearchRoot) {
+      headerSearchField.addEventListener('focus', () => {
+        headerSearchRoot.classList.add('ac--active');
+      });
 
-    headerSearchField.addEventListener('input', () => {
-      headerSearchRoot.classList.add('ac--active');
-    });
+      headerSearchField.addEventListener('input', () => {
+        headerSearchRoot.classList.add('ac--active');
+      });
+    }
   }
 
   // 바깥 영역 클릭
